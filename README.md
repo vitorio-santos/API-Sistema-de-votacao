@@ -4,6 +4,7 @@
 
 API REST desenvolvida em Java com Spring Boot para gerenciamento de usuários, enquetes, opções de voto e registro de votos.
 
+
 **📌 Sobre o projeto**
 
 O sistema permite criar enquetes com várias opções e registrar votos respeitando regras de negócio. Cada enquete pode estar ABERTA, ENCERRADA ou CANCELADA.
