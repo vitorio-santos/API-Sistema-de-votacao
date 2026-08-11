@@ -1,12 +1,10 @@
-# API-Sistema-de-votacao
+# API-Sistema-de-votação
 
-🗳️ Sistema de Votação — API REST em Java
+**🗳️ SISTEMA DE VOTAÇÃO EM TEMPO REAL**
 
 API REST desenvolvida em Java com Spring Boot para gerenciamento de usuários, enquetes, opções de voto e registro de votos.
 
-🚧 Status: Em desenvolvimento.
-
-📌 Sobre o projeto
+**📌 Sobre o projeto**
 
 O sistema permite criar enquetes com várias opções e registrar votos respeitando regras de negócio. Cada enquete pode estar ABERTA, ENCERRADA ou CANCELADA.
 
@@ -15,7 +13,7 @@ Fluxo principal
 Usuário → Escolhe enquete → Escolhe opção → API valida regras
 → Voto salvo → Contador atualizado → Resultado consultado
 
-🎯 Regras de negócio
+**🎯 Regras de negócio**
 
 1. Um usuário pode criar uma enquete.
 
@@ -37,64 +35,89 @@ Enquetes encerradas não aceitam novos votos.
 
 O ranking é ordenado pela maior quantidade de votos.
 
-🧩 Modelo de dados
+**🧩 Modelo de dados**
 
->Usuario
+1. Usuario
 
 >id
+
 >nome
+
 >email
 
 Relacionamentos:
 
 Usuario 1 ─── N Enquete
+
 Usuario 1 ─── N Voto
 
-Enquete
+2. Enquete
 
-id
-titulo
-pergunta
-status
-dataCriacao
-dataEncerramento
-usuario
+>id
+
+>titulo
+
+>pergunta
+
+>status
+
+>dataCriacao
+
+>dataEncerramento
+
+>usuario
 
 Relacionamentos:
 
 Enquete N ─── 1 Usuario
+
 Enquete 1 ─── N OpcaoVoto
+
 Enquete 1 ─── N Voto
 
-OpcaoVoto
+3. OpcaoVoto
 
-id
-texto
-quantidadeVotos
-enquete
+>id
 
-Voto
+>texto
 
-id
-usuario
-enquete
-opcao
-dataVoto
+>quantidadeVotos
+
+>enquete
+
+4. Voto
+
+>id
+
+>usuario
+
+>enquete
+
+>opcao
+
+>dataVoto
 
 A combinação usuario_id + enquete_id deve ser única para impedir votos duplicados.
 
-🏗️ Arquitetura
+**🏗️ Arquitetura**
 
 src/main/java
-│
-├── controller       # Endpoints REST
-├── dto              # Objetos de entrada e saída
-├── service          # Regras de negócio
-└── infrastructure
-    ├── entity       # Entidades JPA
-    └── repository   # Acesso aos dados
 
-Responsabilidades
+>│
+
+>├── controller       (Endpoints REST)
+
+>├── dto              (Objetos de entrada e saída)
+
+>├── service          (Regras de negócio)
+
+>└── infrastructure
+    
+>├── entity           (Entidades JPA)
+    
+>└── repository       (Acesso aos dados)
+
+**Responsabilidades**
 
 Controller: recebe requisições HTTP e retorna respostas.
 
@@ -106,7 +129,7 @@ Entity: representa as entidades persistidas.
 
 Repository: realiza o acesso ao banco através do Spring Data JPA.
 
-🔌 Endpoints
+**🔌 Endpoints**
 
 Usuários
 
@@ -114,53 +137,77 @@ POST /usuarios
 
 Exemplo:
 
-{
-  "nome": "João da Silva",
-  "email": "joao@email.com"
-}
+>{
+  
+   >"nome": "João da Silva",
+  
+   >"email": "joao@email.com"
+
+>}
 
 Enquetes
 
-POST /enquetes
-GET /enquetes
-GET /enquetes/{enqueteId}
-PATCH /enquetes/{enqueteId}/encerrar
+>POST /enquetes
+
+>GET /enquetes
+
+>GET /enquetes/{enqueteId}
+
+>PATCH /enquetes/{enqueteId}/encerrar
 
 Votação
 
-POST /enquetes/{enqueteId}/votos
+>POST /enquetes/{enqueteId}/votos
 
 Payload:
 
-{
-  "usuarioId": 1,
-  "opcaoId": 2
-}
+>{
+
+  >"usuarioId": 1,
+
+  >"opcaoId": 2
+
+>}
 
 Resultado
 
-GET /enquetes/{enqueteId}/resultado
+>GET /enquetes/{enqueteId}/resultado
 
 Exemplo de resposta:
 
-{
-  "totalVotos": 100,
-  "opcoes": [
-    {
-      "texto": "Opção A",
-      "votos": 60,
-      "percentual": 60.0
-    },
-    {
-      "texto": "Opção B",
-      "votos": 40,
-      "percentual": 40.0
-    }
-  ],
-  "opcaoVencedora": "Opção A"
-}
+>{
+  
+  >"totalVotos": 100,
+  
+  >"opcoes": [
 
-🛡️ Validação do voto
+>{
+    
+>"texto": "Opção A",
+     
+>"votos": 60,
+      
+>"percentual": 60.0
+    
+ >},
+    
+>{
+     
+>"texto": "Opção B",
+      
+>"votos": 40,
+      
+>"percentual": 40.0
+    
+>}
+  
+  >],
+  
+  >"opcaoVencedora": "Opção A"
+
+>}
+
+**🛡️ Validação do voto**
 
 Ao receber um voto, o serviço deve:
 
@@ -176,35 +223,36 @@ Ao receber um voto, o serviço deve:
 
 Se alguma regra for violada, o voto não deve ser registrado.
 
-🛠️ Tecnologias
+**🛠️ Tecnologias**
 
-Java 21+
+.Java 21+
 
-Spring Boot
+.Spring Boot
 
-Spring Web
+.Spring Web
 
-Spring Data JPA
+.Spring Data JPA
 
-Hibernate
+.Hibernate
 
-PostgreSQL
+.PostgreSQL
 
-Flyway
+F.lyway
 
-Bean Validation
+.Bean Validation
 
-WebSocket — evolução planejada
+.WebSocket — evolução planejada
 
-Maven
+.Maven
 
-Lombok
+.Lombok
 
-Git/GitHub
+.Git/GitHub
 
-IntelliJ IDEA
+.IntelliJ IDEA
 
-🗄️ Banco de dados
+
+**🗄️ Banco de dados**
 
 O projeto utiliza PostgreSQL.
 
@@ -217,58 +265,55 @@ Configure src/main/resources/application.properties:
 spring.application.name=sistema-de-votacao
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/sistema_votacao
+
 spring.datasource.username=postgres
+
 spring.datasource.password=SUA_SENHA
 
 spring.jpa.hibernate.ddl-auto=update
+
 spring.jpa.show-sql=true
+
 spring.jpa.properties.hibernate.format_sql=true
 
-⚠️ Nunca publique sua senha real no GitHub. Em projetos reais, utilize variáveis de ambiente ou outro mecanismo seguro.
+**⚠️ Nunca publique sua senha real no GitHub. Em projetos reais, utilize variáveis de ambiente ou outro mecanismo seguro.**
 
-▶️ Como executar
 
-Pré-requisitos
+**▶️ Como executar**
 
-JDK
+Pré-requisitos:
 
-Maven ou Maven Wrapper
+-JDK
 
-PostgreSQL
+-Maven ou Maven Wrapper
 
-IntelliJ IDEA ou outra IDE Java
+-PostgreSQL
+
+-IntelliJ IDEA ou outra IDE Java
 
 Executar pelo IntelliJ
 
-Execute:
-
-SistemaDeVotacaoApplication
+Execute: SistemaDeVotacaoApplication
 
 Executar pelo Maven
 
-Linux/macOS:
+-Linux/macOS: ./mvnw spring-boot:run
 
-./mvnw spring-boot:run
+-Windows: mvnw.cmd spring-boot:run
 
-Windows:
+A aplicação ficará disponível, por padrão, em: http://localhost:8080
 
-mvnw.cmd spring-boot:run
-
-A aplicação ficará disponível, por padrão, em:
-
-http://localhost:8080
-
-🧪 Testando a API
+**🧪 Testando a API**
 
 A API pode ser testada com:
 
-Postman
+-Postman
 
-Insomnia
+-Insomnia
 
-curl
+-curl
 
-IntelliJ HTTP Client
+-IntelliJ HTTP Client
 
 Exemplo:
 
@@ -280,7 +325,8 @@ Content-Type: application/json
   "email": "maria@email.com"
 }
 
-📊 Resultado e ranking
+
+**📊 Resultado e ranking**
 
 O resultado deve calcular:
 
@@ -290,7 +336,8 @@ A opção vencedora é aquela com maior quantidade de votos.
 
 O ranking deve apresentar as opções em ordem decrescente de votos.
 
-🚀 Evoluções planejadas
+
+**🚀 Evoluções planejadas**
 
 Atualização dos resultados em tempo real com WebSocket.
 
@@ -306,7 +353,8 @@ Testes unitários e de integração.
 
 Melhor tratamento de exceções e respostas HTTP.
 
-🎓 Objetivo de aprendizado
+
+**🎓 Objetivo de aprendizado**
 
 O projeto foi desenvolvido para praticar:
 
@@ -334,12 +382,12 @@ PostgreSQL;
 
 Git e GitHub.
 
-👨‍💻 Autor
+**👨‍💻 Autor**
 
 Vitório Santos
 
 Projeto desenvolvido para estudo e prática de desenvolvimento de APIs com Java e Spring Boot.
 
-📄 Licença
+**📄 Licença**
 
 Projeto destinado principalmente a estudo e aprendizado.
