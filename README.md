@@ -1,394 +1,554 @@
-# API-Sistema-de-votação
+**🗳️ API - SISTEMA DE VOTAÇÃO EM TEMPO REAL**
 
-**🗳️ SISTEMA DE VOTAÇÃO EM TEMPO REAL**
+API REST para criação de enquetes, cadastro de usuários e registro de votos.
 
-API REST desenvolvida em Java com Spring Boot para gerenciamento de usuários, enquetes, opções de voto e registro de votos.
+O projeto foi desenvolvido com foco em uma arquitetura organizada em camadas, separando a exposição dos endpoints, as regras de negócio, os objetos de transferência de dados e a persistência no banco de dados.
 
+**🎯 OBJETIVO DO PROJETO**
 
-**📌 Sobre o projeto**
+O Sistema de Votação permite que usuários sejam cadastrados e participem de enquetes.
 
-O sistema permite criar enquetes com várias opções e registrar votos respeitando regras de negócio. Cada enquete pode estar ABERTA, ENCERRADA ou CANCELADA.
+O fluxo principal da aplicação é:
 
-Fluxo principal
+1. 👤 Um usuário é cadastrado no sistema.
 
-Usuário → Escolhe enquete → Escolhe opção → API valida regras
-→ Voto salvo → Contador atualizado → Resultado consultado
+2. 📝 Uma enquete é criada com título, pergunta e opções de resposta.
 
-**🎯 Regras de negócio**
+3. 🔎 As enquetes disponíveis podem ser consultadas.
 
-1. Um usuário pode criar uma enquete.
+4. 🗳️ Um usuário escolhe uma opção e registra seu voto.
 
-2. Uma enquete possui uma pergunta e várias opções.
+5. 🚫 O sistema valida se aquele usuário já votou na enquete.
 
-3. A enquete pode estar ABERTA, ENCERRADA ou CANCELADA.
+6. 📊 O resultado pode ser consultado.
 
-4. Só é possível votar em enquete ABERTA.
+7. 🔒 A enquete pode ser encerrada, impedindo novas votações conforme as regras da aplicação.
 
-5. O usuário só pode votar em uma opção pertencente à enquete.
+8. 🛠️ Tecnologias utilizadas
 
-6. Cada usuário pode votar apenas uma vez na mesma enquete.
+As tecnologias abaixo foram escolhidas para estruturar a API, facilitar o desenvolvimento e organizar a persistência dos dados.
 
-7. O total de votos é atualizado após o voto.
+**☕ Java 21**
 
-8. O resultado apresenta total, votos por opção, percentual e vencedora.
+Linguagem principal utilizada no desenvolvimento da aplicação.
 
-Enquetes encerradas não aceitam novos votos.
+O Java fornece a base para a implementação das entidades, serviços, controladores, regras de negócio e demais componentes da aplicação.
 
-O ranking é ordenado pela maior quantidade de votos.
+🔗 Documentação oficial do Java — Oracle
 
-**🧩 Modelo de dados**
+**🌱 Spring Boot 4.1.0**
 
-1. Usuario
+Framework utilizado como base da aplicação.
 
->id
+O Spring Boot facilita a criação de aplicações Java independentes e fornece recursos para configuração, execução e desenvolvimento de APIs.
 
->nome
+🔗 Documentação oficial do Spring Boot
 
->email
+🔗 Guia oficial para criação de aplicações Spring Boot
 
-Relacionamentos:
+**🌐 Spring Web MVC**
 
-Usuario 1 ─── N Enquete
+Utilizado para disponibilizar os endpoints HTTP da API e receber as requisições realizadas pelo cliente.
 
-Usuario 1 ─── N Voto
+É por meio dessa camada que operações como criar usuário, consultar enquetes e registrar votos ficam disponíveis para consumo.
 
-2. Enquete
+🔗 Documentação oficial do Spring Web MVC
 
->id
+**🗄️ Spring Data JPA**
 
->titulo
+Responsável por facilitar a comunicação entre a aplicação e o banco de dados através do padrão JPA.
 
->pergunta
+Os repositórios da aplicação utilizam essa tecnologia para consultar e persistir as informações das entidades.
 
->status
+🔗 Documentação oficial do Spring Data JPA
 
->dataCriacao
+**🐘 PostgreSQL**
 
->dataEncerramento
+Banco de dados relacional utilizado para armazenar os dados da aplicação.
 
->usuario
+Entre as informações persistidas estão usuários, enquetes, opções e votos.
 
-Relacionamentos:
+🔗 Documentação oficial do PostgreSQL
 
-Enquete N ─── 1 Usuario
+🔗 Tutorial oficial do PostgreSQL
 
-Enquete 1 ─── N OpcaoVoto
+**🔄 Flyway**
 
-Enquete 1 ─── N Voto
+Ferramenta utilizada para controle e versionamento das alterações do banco de dados.
 
-3. OpcaoVoto
+As migrations permitem que a estrutura do banco seja criada e evolua de maneira organizada junto com o código da aplicação.
 
->id
+🔗 Documentação oficial do Flyway
 
->texto
+**🧩 Lombok**
 
->quantidadeVotos
+Biblioteca utilizada para reduzir código repetitivo em classes Java, principalmente na criação de métodos e estruturas comuns.
 
->enquete
+🔗 Documentação oficial do Lombok
 
-4. Voto
+**📦 Maven**
 
->id
+Ferramenta utilizada para gerenciamento do projeto, dependências, compilação e execução de testes.
 
->usuario
+O projeto possui Maven Wrapper, permitindo executar os comandos sem depender de uma instalação global do Maven.
 
->enquete
+🔗 Documentação oficial do Maven
 
->opcao
+**🏗️ CONSTRUÇÃO DO PROJETO**
 
->dataVoto
+A aplicação foi organizada seguindo uma separação de responsabilidades entre as principais camadas.
 
-A combinação usuario_id + enquete_id deve ser única para impedir votos duplicados.
+De forma simplificada:
 
-**🏗️ Arquitetura**
+Cliente
+   │
+   ▼
+🎮 Controller
+   │
+   ▼
+⚙️ Service
+   │
+   ▼
+📚 Repository
+   │
+   ▼
+🗄️ PostgreSQL
 
-src/main/java
+🎮 Controller
 
->│
+É a porta de entrada da API.
 
->├── controller       (Endpoints REST)
+Os controllers recebem as requisições HTTP, extraem os dados enviados pelo cliente e direcionam a operação para a camada de serviço.
 
->├── dto              (Objetos de entrada e saída)
+Exemplos:
 
->├── service          (Regras de negócio)
+.Criar usuário
 
->└── infrastructure
-    
->├── entity           (Entidades JPA)
-    
->└── repository       (Acesso aos dados)
+.Criar enquete
 
-**Responsabilidades**
+.Buscar enquete
 
-Controller: recebe requisições HTTP e retorna respostas.
+.Registrar voto
 
-DTO: define os dados de entrada e saída da API.
+.Consultar resultado
 
-Service: concentra as regras de negócio.
+.Enquete
 
-Entity: representa as entidades persistidas.
+**⚙️ Service**
 
-Repository: realiza o acesso ao banco através do Spring Data JPA.
+Concentra as regras de negócio da aplicação.
 
-**🔌 Endpoints**
+Essa camada evita que regras importantes fiquem diretamente nos controllers.
 
-Usuários
+Entre as responsabilidades estão:
+
+Validar a existência de usuários e enquetes.
+
+Verificar se uma opção pertence à enquete.
+
+Impedir votos duplicados do mesmo usuário.
+
+Verificar as condições necessárias para votação.
+
+Processar o resultado da enquete.
+
+Controlar o encerramento das enquetes.
+
+**📚 Repository**
+
+Responsável pelo acesso aos dados persistidos.
+
+Os repositories utilizam Spring Data JPA para realizar operações de consulta, criação, alteração e relacionamento entre os dados.
+
+**🗄️ Entity**
+
+Representa os dados persistidos no banco de dados.
+
+As entidades fazem a ligação entre os objetos Java e as tabelas utilizadas pelo PostgreSQL.
+
+**📦 DTO**
+
+Os DTOs são utilizados para transportar dados entre a API e o cliente.
+
+Isso permite separar os objetos utilizados nas requisições e respostas da estrutura interna das entidades do banco.
+
+**⚠️ Exception**
+
+A camada de exceções concentra os erros específicos da aplicação e o tratamento das situações que não podem ser processadas normalmente.
+
+**👤 INTERAÇÃO DO USUÁRIO**
+
+O usuário interage com o sistema através dos endpoints disponibilizados pela API.
+
+A interação pode ser dividida em três momentos principais:
+
+**1. 👤 CRIAÇÃO DO USUÁRIO**
+
+Antes de participar de uma votação, o usuário pode ser cadastrado informando seus dados.
+
+Exemplo:
 
 POST /usuarios
 
-Exemplo:
-
->{
-  
-   >"nome": "João da Silva",
-  
-   >"email": "joao@email.com"
-
->}
-
-Enquetes
-
->POST /enquetes
-
->GET /enquetes
-
->GET /enquetes/{enqueteId}
-
->PATCH /enquetes/{enqueteId}/encerrar
-
-Votação
-
->POST /enquetes/{enqueteId}/votos
-
-Payload:
-
->{
-
-  >"usuarioId": 1,
-
-  >"opcaoId": 2
-
->}
-
-Resultado
-
->GET /enquetes/{enqueteId}/resultado
-
-Exemplo de resposta:
-
->{
-  
-  >"totalVotos": 100,
-  
-  >"opcoes": [
-
->{
-    
->"texto": "Opção A",
-     
->"votos": 60,
-      
->"percentual": 60.0
-    
- >},
-    
->{
-     
->"texto": "Opção B",
-      
->"votos": 40,
-      
->"percentual": 40.0
-    
->}
-  
-  >],
-  
-  >"opcaoVencedora": "Opção A"
-
->}
-
-**🛡️ Validação do voto**
-
-Ao receber um voto, o serviço deve:
-
-1. Buscar a enquete
-2. Verificar se existe
-3. Verificar se está ABERTA
-4. Buscar o usuário
-5. Verificar se já votou
-6. Buscar a opção
-7. Verificar se a opção pertence à enquete
-8. Registrar o voto
-9. Atualizar a quantidade de votos
-
-Se alguma regra for violada, o voto não deve ser registrado.
-
-**🛠️ Tecnologias**
-
-.Java 21+
-
-.Spring Boot
-
-.Spring Web
-
-.Spring Data JPA
-
-.Hibernate
-
-.PostgreSQL
-
-F.lyway
-
-.Bean Validation
-
-.WebSocket — evolução planejada
-
-.Maven
-
-.Lombok
-
-.Git/GitHub
-
-.IntelliJ IDEA
-
-
-**🗄️ Banco de dados**
-
-O projeto utiliza PostgreSQL.
-
-Crie o banco:
-
-CREATE DATABASE sistema_votacao;
-
-Configure src/main/resources/application.properties:
-
-spring.application.name=sistema-de-votacao
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/sistema_votacao
-
-spring.datasource.username=postgres
-
-spring.datasource.password=SUA_SENHA
-
-spring.jpa.hibernate.ddl-auto=update
-
-spring.jpa.show-sql=true
-
-spring.jpa.properties.hibernate.format_sql=true
-
-**⚠️ Nunca publique sua senha real no GitHub. Em projetos reais, utilize variáveis de ambiente ou outro mecanismo seguro.**
-
-
-**▶️ Como executar**
-
-Pré-requisitos:
-
--JDK
-
--Maven ou Maven Wrapper
-
--PostgreSQL
-
--IntelliJ IDEA ou outra IDE Java
-
-Executar pelo IntelliJ
-
-Execute: SistemaDeVotacaoApplication
-
-Executar pelo Maven
-
--Linux/macOS: ./mvnw spring-boot:run
-
--Windows: mvnw.cmd spring-boot:run
-
-A aplicação ficará disponível, por padrão, em: http://localhost:8080
-
-**🧪 Testando a API**
-
-A API pode ser testada com:
-
--Postman
-
--Insomnia
-
--curl
-
--IntelliJ HTTP Client
-
-Exemplo:
-
-POST http://localhost:8080/usuarios
-Content-Type: application/json
-
 {
-  "nome": "Maria",
-  "email": "maria@email.com"
+  "nome": "João",
+  "email": "joao@email.com"
 }
 
+Depois do cadastro, o usuário passa a possuir um identificador que pode ser utilizado nas operações relacionadas às enquetes.
 
-**📊 Resultado e ranking**
+**🔎 BUSCA E CONSULTA DE ENQUETES**
 
-O resultado deve calcular:
+Depois que existem enquetes cadastradas, o usuário pode consultar as opções disponíveis.
 
-percentual = (votosDaOpcao / totalDeVotos) × 100
+**📋 LISTAR ENQUETES**
 
-A opção vencedora é aquela com maior quantidade de votos.
+GET /enquetes
 
-O ranking deve apresentar as opções em ordem decrescente de votos.
+Esse endpoint permite obter as enquetes cadastradas.
+
+**🔍 CONSULTAR UMA ENQUETE**
+
+GET /enquetes/{id}
+
+A consulta individual permite obter os detalhes de uma enquete específica, utilizando seu identificador.
+
+**📊 CONSULTAR RESULTADO**
+
+GET /enquetes/{id}/resultado
+
+Esse endpoint permite visualizar o resultado da votação de uma enquete.
+
+**🗳️ PROCESSO DE VOTAÇÃO**
+
+O processo de votação acontece quando o usuário escolhe uma opção pertencente a uma enquete.
+
+A operação é realizada através de:
+
+POST /enquetes/{id}/votos
+
+O sistema recebe os dados necessários para identificar o usuário e a opção escolhida.
+
+Exemplo:
+
+{
+  "usuarioId": 1,
+  "opcaoId": 2
+}
+
+Durante esse processo, a camada de serviço realiza as validações necessárias antes de registrar o voto.
+
+**🔐 VALIDAÇÕES**
+
+Entre as principais verificações estão:
+
+1. 👤 O usuário precisa existir.
+
+2. 📋 A enquete precisa existir.
+
+3. 📝 A opção escolhida precisa pertencer à enquete.
+
+4. 🚫 O usuário não pode votar duas vezes na mesma enquete.
+
+5. 🔒 A enquete precisa estar disponível para votação.
+
+Somente depois que as regras forem atendidas o voto é persistido no banco de dados.
+
+**📝 CRIAÇÃO DE UMA ENQUETE**
+
+Uma enquete pode ser criada informando seu título, pergunta, usuário responsável e opções de resposta.
+
+Endpoint:
+
+POST /enquetes
+
+Exemplo:
+
+{
+  
+  "titulo": "Eleição",
+  
+  "pergunta": "Qual opção você prefere?",
+  
+  "usuarioId": 1,
+  
+  "opcoes": [
+    
+"Opção A",
+"Opção B",
+"Opção C"
+  
+  ]
+
+}
+
+A partir dessa operação, a aplicação cria a estrutura necessária para que a enquete possa ser consultada e receber votos.
+
+**🔒 ENCERRAMENTO DE UMA ENQUETE**
+
+Uma enquete pode ser encerrada através do endpoint:
+
+PATCH /enquetes/{id}/encerrar
+
+O encerramento altera o estado da enquete e permite que o sistema controle se novas votações podem ser realizadas.
+
+**🔗 PRINCIPAIS ENDPOINTS**
+
+**👤 Usuários**
+
+Método
+
+Endpoint
+
+Descrição
+
+POST
+
+/usuarios
+
+**➕ Cria um usuário**
+
+GET
+
+/usuarios
+
+**📋 Lista os usuários**
+
+**📋 Enquetes**
+
+Método
+
+Endpoint
+
+Descrição
+
+POST
+
+/enquetes
+
+**➕ Cria uma enquete**
+
+GET
+
+/enquetes
+
+**📋 Lista as enquetes**
+
+GET
+
+/enquetes/{id}
+
+**🔎 Consulta uma enquete**
+
+GET
+
+/enquetes/{id}/resultado
+
+**📊 Consulta o resultado**
+
+PATCH
+
+/enquetes/{id}/encerrar
+
+**🔒 Encerra uma enquete**
+
+**🗳️ Votos**
+
+Método
+
+Endpoint
+
+Descrição
+
+POST
+
+/enquetes/{id}/votos
+
+**🗳️ Registra um voto**
+
+**🗂️ Estrutura do projeto**
+
+src/main/java/
+
+├── 🎮 controller/
+
+│   └── Endpoints da API
 
 
-**🚀 Evoluções planejadas**
 
-Atualização dos resultados em tempo real com WebSocket.
+├── 📦 dto/
 
-Dashboard com gráficos e filtros.
+│   └── Objetos de entrada e saída
 
-Autenticação e perfis de usuários.
+│
 
-JWT e autorização.
+├── ⚠️ exception/
 
-Encerramento automático por data.
+│   └── Exceções e tratamento de erros
 
-Testes unitários e de integração.
+│
 
-Melhor tratamento de exceções e respostas HTTP.
+├── 🏗️ infrastructure/
 
+│   ├── 🗄️ entity/
 
-**🎓 Objetivo de aprendizado**
+│   │   └── Entidades do banco
 
-O projeto foi desenvolvido para praticar:
+│
 
-Java e orientação a objetos;
+│   └── 📚 repository/
 
-APIs REST;
+└── Repositórios JPA
 
-Spring Boot;
+│
 
-arquitetura em camadas;
+⚙️ service/
+    └── Regras de negócio
 
-DTOs;
+**🗄️ CONFIGURAÇÃO DO BANCO DE DADOS**
 
-Services;
+Crie um banco PostgreSQL chamado:
 
-Repositories;
+sistema_votacao
 
-JPA/Hibernate;
+As configurações atuais estão em:
 
-relacionamentos entre entidades;
+src/main/resources/application.properties
 
-regras de negócio;
+Configuração utilizada no projeto:
 
-PostgreSQL;
+spring.datasource.url=jdbc:postgresql://localhost:5432/sistema_votacao
+spring.datasource.username=postgres
+spring.datasource.password=238759
 
-Git e GitHub.
+**⚠️ Importante: em ambientes reais, não é recomendado manter senhas diretamente no código ou no arquivo de configuração versionado. Prefira variáveis de ambiente ou um mecanismo de gerenciamento de secrets.**
 
-**👨‍💻 Autor**
+As migrations do Flyway são executadas para manter a estrutura do banco sincronizada com a aplicação.
 
-Vitório Santos
+**📋 Pré-requisitos**
 
-Projeto desenvolvido para estudo e prática de desenvolvimento de APIs com Java e Spring Boot.
+Antes de executar o projeto, tenha instalado:
 
-**📄 Licença**
+.☕ Java 21
 
-Projeto destinado principalmente a estudo e aprendizado.
+.🐘 PostgreSQL
+
+.📦 Maven, caso não utilize o Maven Wrapper
+
+.💻 Uma IDE ou editor de código de sua preferência
+
+.▶️ Como executar
+
+Clone ou extraia o projeto e entre na pasta principal.
+
+Linux / macOS
+
+./mvnw spring-boot:run
+
+Windows
+
+mvnw.cmd spring-boot:run
+
+**🚀 A aplicação será iniciada na porta padrão:**
+
+8080
+
+A API poderá então ser acessada através de:
+
+http://localhost:8080
+
+**🧪 Executando os testes**
+
+Para executar os testes automatizados:
+
+Linux / macOS
+
+./mvnw test
+
+Windows
+
+mvnw.cmd test
+
+Os testes ajudam a verificar se as funcionalidades implementadas continuam funcionando conforme esperado.
+
+**🔄 Fluxo completo de utilização**
+
+Um fluxo típico de utilização do sistema pode seguir esta sequência:
+
+1. 👤 Criar usuário
+      │
+      ▼
+2. 📝 Criar enquete
+      │
+      ▼
+3. 🔎 Buscar enquete
+      │
+      ▼
+4. 📋 Visualizar opções
+      │
+      ▼
+5. 🗳️ Registrar voto
+      │
+      ▼
+6. 📊 Consultar resultado
+      │
+      ▼
+7. 🔒 Encerrar enquete
+
+Esse fluxo representa a interação principal entre o usuário e a API, desde o cadastro até o encerramento de uma votação.
+
+**💡 Conceitos utilizados**
+
+O projeto também serve como exemplo prático de alguns conceitos importantes no desenvolvimento de APIs:
+
+.🌐 API REST
+
+.🏗️ Arquitetura em camadas
+
+.🎯 Separação de responsabilidades
+
+.📦 DTOs
+
+.🗄️ Persistência relacional
+
+.🔗 Relacionamentos entre entidades
+
+.⚙️ Regras de negócio
+
+.⚠️ Tratamento de exceções
+
+. Versionamento de banco de dados
+
+.🧪 Testes automatizados
+
+.📡 Comunicação através de HTTP
+
+.📚 Documentação oficial das tecnologias
+
+Para quem não conhece alguma das tecnologias utilizadas, os links abaixo direcionam para suas respectivas documentações oficiais:
+
+.☕ Java — Oracle
+
+.🌱 Spring Boot — Spring
+
+.🌐 Spring Framework / Web MVC
+
+.🗄️ Spring Data JPA
+
+.🐘 PostgreSQL
+
+.🔄 Flyway
+
+.🧩 Lombok
+
+.📦 Maven
+
+.⭐ Sobre o projeto
+
+O Sistema de Votação foi desenvolvido como uma aplicação backend para praticar e demonstrar conceitos de desenvolvimento de APIs REST utilizando Java e Spring Boot, com persistência em PostgreSQL e organização do código em diferentes camadas.
+
+A estrutura permite evoluir o projeto futuramente com funcionalidades como autenticação, autorização, paginação, documentação OpenAPI/Swagger, frontend e outras regras de votação.
+
+**👨‍💻 DESENVOLVIMENTO**
+
+Projeto desenvolvido para fins de estudo e prática de desenvolvimento de APIs REST com Java e Spring Boot.
